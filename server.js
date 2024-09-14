@@ -34,7 +34,7 @@ app.post("/posting", async (req,res)=>{
         const data = new Question(item)
         await data.save();
     }
-    res.status(200).send({msg:"success"})
+    res.status(200).send({msg:"success"});
 })
 
 app.get('/api/questions/:id', async (req, res) => {
