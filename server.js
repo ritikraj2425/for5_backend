@@ -5,6 +5,7 @@ require('dotenv').config({ path: './env' })
 const app = express();
 app.use(cors());
 app.use(express.json());
+const {questionSchema}  = require('./Schemas/schemas');
 
 
 const mongoURI = "mongodb+srv://rajritik2425:qH8UD3y3ztRMZ2Kj@for5-db.o229c.mongodb.net/for5?retryWrites=true&w=majority";
@@ -15,27 +16,11 @@ mongoose.connect(mongoURI)
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('MongoDB connection error:', err));
 
-const questionSchema = new mongoose.Schema({
-    questionName: String,
-    question: String,
-    difficulty: String,
-    year: String,
-    repetitive: Boolean,
-    subject: String,
-    topic: String,
-    questionType: String,
-    weightage: Number,
-    tags: [String],
-    options: [Object]
-}, { collection: 'Questions' });
-
-
-const Question = mongoose.model('Question', questionSchema);
 
 // Endpoint to get all questions
 app.get('/api/questions', async (req, res) => {
     try {
-        const questions = await Question.find({});
+        const questions = await Question.find();
         console.log(questions);
         res.json(questions);
     } catch (error) {
@@ -43,7 +28,14 @@ app.get('/api/questions', async (req, res) => {
         res.status(500).json({ message: 'Error fetching questions' });
     }
 });
-
+app.post("/posting", async (req,res)=>{
+    const dataFromUser = req.body;
+    for(let item of dataFromUser){
+        const data = new Question(item)
+        await data.save();
+    }
+    res.status(200).send({msg:"success"});
+})
 
 app.get('/api/questions/:id', async (req, res) => {
     try {
