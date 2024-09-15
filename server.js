@@ -16,23 +16,72 @@ mongoose.connect(mongoURI)
     .catch(err => console.error('MongoDB connection error:', err));
 
 const questionSchema = new mongoose.Schema({
-    questionName: String,
-    question: String,
-    difficulty: String,
-    year: String,
-    repetitive: Boolean,
     subject: String,
+    chapter: String,
     topic: String,
-    questionType: String,
+    questionTitle: String,
+    question: String,
+    class: String,
+    difficulty: String,
+    year: Number,
+    options: [Object],
+    constestId: String,
+    image: String,
     weightage: Number,
-    tags: [String],
-    options: [Object]
+    openedBy: Number,
+    solvedBy: Number,
+    type: String
 }, { collection: 'Questions' });
+
+const videoLinkSchema = new mongoose.Schema({
+    VideoId: String,
+    section: String,
+    link: String
+}, { collection: 'HomepageVideos' })
 
 
 const Question = mongoose.model('Question', questionSchema);
+const HomepageVideoLink = mongoose.model('HomepageVideos', videoLinkSchema)
 
-// Endpoint to get all questions
+
+app.get('/api/homepageVideoLink/Featured', async (req, res) => {
+    try {
+        const linkFeatured = await HomepageVideoLink.find({ section: "featured" });
+        console.log(linkFeatured);
+        res.json(linkFeatured);
+    } catch (err) {
+        console.error('Error fetching links', err);
+        res.status(500).json({ message: "Error fetching links" })
+
+    }
+})
+
+
+app.get('/api/homepageVideoLink/learn', async (req, res) => {
+    try {
+        const linkFeatured = await HomepageVideoLink.find({ section: "learn" });
+        console.log(linkFeatured);
+        res.json(linkFeatured);
+    } catch (err) {
+        console.error('Error fetching links', err);
+        res.status(500).json({ message: "Error fetching links" })
+
+    }
+})
+
+
+app.post("/posting", async (req,res)=>{
+    const dataFromUser = req.body;
+    for(let item of dataFromUser){
+
+        const data = new Question(item)
+        await data.save();
+    }
+    res.status(200).send({msg:"success"});
+})
+
+
+
 app.get('/api/questions', async (req, res) => {
     try {
         const questions = await Question.find({});
@@ -58,7 +107,7 @@ app.get('/api/questions/:id', async (req, res) => {
     }
 });
 
-// Endpoint to filter questions by subject
+
 app.get('/api/questions/filter/:subject', async (req, res) => {
     try {
         const questions = await Question.find({ subject: req.params.subject });
@@ -72,7 +121,7 @@ app.get('/api/questions/filter/:subject', async (req, res) => {
     }
 });
 
-// Endpoint to test connection
+
 app.get('/api/test', async (req, res) => {
     try {
         const count = await Question.countDocuments({});
