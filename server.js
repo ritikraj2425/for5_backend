@@ -1,14 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config({ path: './env' })
+require('dotenv').config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+
 const {questionSchema}  = require('./Schemas/schemas');
 
 
-const mongoURI = "mongodb+srv://rajritik2425:qH8UD3y3ztRMZ2Kj@for5-db.o229c.mongodb.net/for5?retryWrites=true&w=majority";
+// const mongoURI = "mongodb+srv://rajritik2425:qH8UD3y3ztRMZ2Kj@for5-db.o229c.mongodb.net/for5?retryWrites=true&w=majority";
+const mongoURI = process.env.MONGO_URI;
 const port = 5000;
 
 
@@ -16,6 +18,7 @@ mongoose.connect(mongoURI)
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('MongoDB connection error:', err));
 
+const Question = mongoose.model('Questions',questionSchema);
 
 // Endpoint to get all questions
 app.get('/api/questions', async (req, res) => {
