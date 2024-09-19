@@ -15,7 +15,6 @@ app.use(express.json());
 const {questionSchema}  = require('./Schemas/schemas');
 
 
-// const mongoURI = "mongodb+srv://rajritik2425:qH8UD3y3ztRMZ2Kj@for5-db.o229c.mongodb.net/for5?retryWrites=true&w=majority";
 const mongoURI = process.env.MONGO_URI;
 const port = 5000;
 
@@ -26,23 +25,6 @@ mongoose.connect(mongoURI)
     .catch(err => console.error('MongoDB connection error:', err));
 
 
-const questionSchema = new mongoose.Schema({
-    subject: String,
-    chapter: String,
-    topic: String,
-    questionTitle: String,
-    question: String,
-    class: String,
-    difficulty: String,
-    year: Number,
-    options: [Object],
-    constestId: String,
-    image: String,
-    weightage: Number,
-    openedBy: Number,
-    solvedBy: Number,
-    type: String
-}, { collection: 'Questions' });
 
 const videoLinkSchema = new mongoose.Schema({
     VideoId: String,
