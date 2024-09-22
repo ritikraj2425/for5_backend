@@ -18,19 +18,23 @@ const AuthenticationRoutes = {
                 if(!name || !username || !email || !password){
                     res.status(400).send({
                         message:"all fields are required"
-                    })
+                    });
+                    return;
                 }
                 const checkUsernameAndEmail  = await Users.findOne({username: username,email:email});
                 if(checkUsernameAndEmail){
-                    res.status(400).send({message:"username and email already exist"})
+                    res.status(400).send({message:"username and email already exist"});
+                    return;
                 }
                 const checkUsername  = await Users.findOne({username: username});
                 if(checkUsername){
-                    res.status(400).send({message:"username already exist"})
+                    res.status(400).send({message:"username already exist"});
+                    return;
                 }
                 const checkEmail  = await Users.findOne({username: username});
                 if(checkEmail){
-                    res.status(400).send({message:"email is already registered"})
+                    res.status(400).send({message:"email is already registered"});
+                    return;
                 }
                 try{
                     const hash = await bcrypt.hash(password,10);
@@ -46,11 +50,11 @@ const AuthenticationRoutes = {
                         message:"success",
                         token:token,
                         refresh_token:refresh_token
-                    })
+                    });
+                    return;
 
                 }
                 catch(e){
-                    console.log(e);
                     res.status(500).send({message:"something went wrong"});
                 }
             }
@@ -62,6 +66,7 @@ const AuthenticationRoutes = {
                 const{username, email, password} = req.body;
                 if(!password || (!email && !username)){
                     res.status(400).send({message:"all fields are required"});
+                    return;
                 }
                 try{
                     let user;
@@ -69,17 +74,20 @@ const AuthenticationRoutes = {
                         user = await Users.findOne({email:email});
                         if(!user){
                             res.status(404).send({message:"User with this email does not exist"});
+                            return;
                         }
                     }
                     else if(!email){
                         user = await Users.findOne({username:username});
                         if(!user){
                             res.status(404).send({message:"User with this username does not exist"});
+                            return;
                         }
                     }
                     const checkPassword = await bcrypt.compare(password, user.password);
                     if(!checkPassword){
                         res.status(400).send({message:"Wrong password"});
+                        return;
                     }
                     const payload = {
                         name:user.name,
@@ -92,7 +100,8 @@ const AuthenticationRoutes = {
                         message:"login successfull",
                         token:token,
                         refresh_token:refresh_token
-                    })
+                    });
+                    return;
                 }
                 catch(e){
                     res.status(500).send({message:"something went wrong"});

@@ -59,27 +59,6 @@ app.get('/api/homepageVideoLink/learn', async (req, res) => {
     }
 })
 
-app.post('/post/userDetails', async(req,res)=>{
-    const dataOfUser = req.body;
-    const user = new Users(dataOfUser);
-    await user.save();
-    res.status(200).send({msg:"success"});
-})
-
-
-
-app.post("/posting", async (req,res)=>{
-    const dataFromUser = req.body;
-    for(let item of dataFromUser){
-
-        const data = new Question(item)
-        await data.save();
-    }
-    res.status(200).send({msg:"success"});
-})
-
-
-
 
 app.get('/api/questions', async (req, res) => {
     try {
@@ -106,29 +85,6 @@ app.get('/api/questions/:id', async (req, res) => {
     }
 });
 
-
-app.get('/api/questions/filter/:subject', async (req, res) => {
-    try {
-        const questions = await Question.find({ subject: req.params.subject });
-        if (questions && questions.length > 0) {
-            res.json(questions);
-        } else {
-            res.status(404).json({ message: 'Questions not found for this subject' });
-        }
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-
-
-app.get('/api/test', async (req, res) => {
-    try {
-        const count = await Question.countDocuments({});
-        res.json({ message: `Number of documents: ${count}` });
-    } catch (error) {
-        res.status(500).json({ message: 'Error testing connection' });
-    }
-});
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
