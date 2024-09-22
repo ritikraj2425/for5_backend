@@ -22,9 +22,15 @@ const questionSchema = new mongoose.Schema({
 
 const userDetailsSchema = new mongoose.Schema({
     name:String,
-    firebaseID:String,
-    username:String,
-    email:String,
+    username:{
+        type:String,
+        unique:true
+    },
+    email:{
+        type:String,
+        unique:true
+    },
+    password:String,
     bio: String,
     location:String,
     gender:String
@@ -37,7 +43,7 @@ const videoLinkSchema = new mongoose.Schema({
 }, { collection: 'HomepageVideos' });
 
 const userStatusSchema = new mongoose.Schema({
-    firebaseID: String,
+    username:"String",
     totalPoints: Number,
     streak: Number,
     QuestionSolved: Number,

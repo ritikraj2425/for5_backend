@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-
+const routes = require("./AllApis/AllRoutes");
 require('dotenv').config();
 
 const app = express();
@@ -15,6 +15,8 @@ mongoose.connect(mongoURI)
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('MongoDB connection error:', err));
 
+
+
 const {questionSchema}  = require('./Schemas/schemas');
 const {userDetailsSchema}  = require('./Schemas/schemas');
 const {videoLinkSchema}  = require('./Schemas/schemas');
@@ -25,7 +27,12 @@ const HomepageVideoLink = mongoose.model('HomepageVideos', videoLinkSchema);
 const Users  = mongoose.model('Users',userDetailsSchema);
 
 
-
+routes.forEach((route)=>{
+    route.routes.forEach((d)=>{
+        app[d.method](route.path + d.path, d.handler);
+        console.log(route.path + d.path);
+    })
+})
 
 
 app.get('/api/homepageVideoLink/Featured', async (req, res) => {
