@@ -66,14 +66,6 @@ app.post('/post/userDetails', async(req,res)=>{
     res.status(200).send({msg:"success"});
 })
 
-app.get('/get/userDetails', async(req,res)=>{
-    const {uid} = req.query;
-    const user  = await Users.findOne({firebaseID: uid})
-    if(!user){
-        console.log("user not found");
-    }
-    res.status(200).json(user);
-})
 
 
 app.post("/posting", async (req,res)=>{
