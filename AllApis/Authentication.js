@@ -1,12 +1,9 @@
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
-const mongoose = require('mongoose');
-dotenv.config(); 
+require('dotenv').config();
 const jwtSecret = process.env.JWT_SECRET;
 const refreshSecret = process.env.REFRESH_SECRET;
-const {userDetailsSchema}  = require('../Schemas/schemas');
-const Users  = mongoose.model('Users',userDetailsSchema);
+const {Users}  = require('../Schemas/schemas');
 const AuthenticationRoutes = {
     path : "",
     routes : [
@@ -31,7 +28,7 @@ const AuthenticationRoutes = {
                     res.status(400).send({message:"username already exist"});
                     return;
                 }
-                const checkEmail  = await Users.findOne({username: username});
+                const checkEmail  = await Users.findOne({email: email});
                 if(checkEmail){
                     res.status(400).send({message:"email is already registered"});
                     return;
@@ -77,13 +74,14 @@ const AuthenticationRoutes = {
                             return;
                         }
                     }
-                    else if(!email){
+                    else if(!email || (!(!email) && !(!username))){
                         user = await Users.findOne({username:username});
                         if(!user){
                             res.status(404).send({message:"User with this username does not exist"});
                             return;
                         }
                     }
+
                     const checkPassword = await bcrypt.compare(password, user.password);
                     if(!checkPassword){
                         res.status(400).send({message:"Wrong password"});
@@ -108,7 +106,6 @@ const AuthenticationRoutes = {
                 }
             }
         }
-        
     ]
 }
 module.exports = AuthenticationRoutes;

@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const routes = require("./AllApis/AllRoutes");
+const {Question,HomepageVideoLink}  = require('./Schemas/schemas');
 require('dotenv').config();
 const app = express();
 app.use(cors());
@@ -13,17 +14,13 @@ const port = 5000;
 
 mongoose.connect(mongoURI)
     .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('MongoDB connection error:', err));
+    .catch(err => {
+        console.error('MongoDB connection error:', err);
+        process.exit(1);
+    });
 
 
-const {questionSchema}  = require('./Schemas/schemas');
-const {userDetailsSchema}  = require('./Schemas/schemas');
-const {videoLinkSchema}  = require('./Schemas/schemas');
 
-
-const Question = mongoose.model('Question', questionSchema);
-const HomepageVideoLink = mongoose.model('HomepageVideos', videoLinkSchema);
-const Users  = mongoose.model('Users',userDetailsSchema);
 
 
 routes.forEach((route)=>{
@@ -36,7 +33,6 @@ routes.forEach((route)=>{
 app.get('/api/homepageVideoLink/Featured', async (req, res) => {
     try {
         const linkFeatured = await HomepageVideoLink.find({ section: "featured" });
-        console.log(linkFeatured);
         res.json(linkFeatured);
     } catch (err) {
         console.error('Error fetching links', err);
@@ -49,7 +45,6 @@ app.get('/api/homepageVideoLink/Featured', async (req, res) => {
 app.get('/api/homepageVideoLink/learn', async (req, res) => {
     try {
         const linkFeatured = await HomepageVideoLink.find({ section: "learn" });
-        console.log(linkFeatured);
         res.json(linkFeatured);
     } catch (err) {
         console.error('Error fetching links', err);
@@ -62,7 +57,6 @@ app.get('/api/homepageVideoLink/learn', async (req, res) => {
 app.get('/api/questions', async (req, res) => {
     try {
         const questions = await Question.find();
-        console.log(questions);
         res.json(questions);
     } catch (error) {
         console.error('Error fetching questions:', error);

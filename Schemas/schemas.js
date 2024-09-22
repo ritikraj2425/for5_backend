@@ -19,6 +19,7 @@ const questionSchema = new mongoose.Schema({
     type: String,
     correctAnswer : String
 }, { collection: 'Questions' });
+const Question = mongoose.model('Question', questionSchema);
 
 const userDetailsSchema = new mongoose.Schema({
     name:String,
@@ -35,12 +36,14 @@ const userDetailsSchema = new mongoose.Schema({
     location:String,
     gender:String
 },{collection: 'Users'});
+const Users  = mongoose.model('Users',userDetailsSchema);
 
 const videoLinkSchema = new mongoose.Schema({
     VideoId: String,
     section: String,
     link: String
 }, { collection: 'HomepageVideos' });
+const HomepageVideoLink = mongoose.model('HomepageVideos', videoLinkSchema);
 
 const userStatusSchema = new mongoose.Schema({
     username:String,
@@ -52,5 +55,6 @@ const userStatusSchema = new mongoose.Schema({
     todayQuestionSolved: Object,
     contestGiven: Object,
 },{collection: 'UserStatus'});
+const UserStatus  = mongoose.model('UserStatus',userStatusSchema);
 
-module.exports = {questionSchema,userDetailsSchema,videoLinkSchema,userStatusSchema};
+module.exports = {Question,Users,HomepageVideoLink,UserStatus};
