@@ -59,55 +59,55 @@ const AuthenticationRoutes = {
                 }
             }
         },
-        {
-            method : "post",
-            path : "/login",
-            handler : async (req,res)=>{
-                const{username, email, password} = req.body;
-                if(!password || (!email && !username)){
-                    res.status(400).send({message:"all fields are required"});
-                    return;
-                }
-                try{
-                    let user;
-                    if(!username){
-                        user = await Users.findOne({email:email});
-                        if(!user){
-                            res.status(404).send({message:"User with this email does not exist"});
-                            return;
-                        }
-                    }
-                    else if(!email){
-                        user = await Users.findOne({username:username});
-                        if(!user){
-                            res.status(404).send({message:"User with this username does not exist"});
-                            return;
-                        }
-                    }
-                    const checkPassword = await bcrypt.compare(password, user.password);
-                    if(!checkPassword){
-                        res.status(400).send({message:"Wrong password"});
-                        return;
-                    }
-                    const payload = {
-                        name:user.name,
-                        username:user.username,
-                        email:user.email
-                    };
-                    const token = jwt.sign(payload,jwtSecret,{expiresIn:"24h"});
-                    const refresh_token = jwt.sign(payload,refreshSecret, {expiresIn:"7d"});
-                    res.status(200).send({
-                        message:"login successfull",
-                        token:token,
-                        refresh_token:refresh_token
-                    });
-                    return;
-                }
-                catch(e){
-                    res.status(500).send({message:"something went wrong"});
-                }
-            }
-        }
+        // {
+        //     method : "post",
+        //     path : "/login",
+        //     handler : async (req,res)=>{
+        //         const{username, email, password} = req.body;
+        //         if(!password || (!email && !username)){
+        //             res.status(400).send({message:"all fields are required"});
+        //             return;
+        //         }
+        //         try{
+        //             let user;
+        //             if(!username){
+        //                 user = await Users.findOne({email:email});
+        //                 if(!user){
+        //                     res.status(404).send({message:"User with this email does not exist"});
+        //                     return;
+        //                 }
+        //             }
+        //             else if(!email){
+        //                 user = await Users.findOne({username:username});
+        //                 if(!user){
+        //                     res.status(404).send({message:"User with this username does not exist"});
+        //                     return;
+        //                 }
+        //             }
+        //             const checkPassword = await bcrypt.compare(password, user.password);
+        //             if(!checkPassword){
+        //                 res.status(400).send({message:"Wrong password"});
+        //                 return;
+        //             }
+        //             const payload = {
+        //                 name:user.name,
+        //                 username:user.username,
+        //                 email:user.email
+        //             };
+        //             const token = jwt.sign(payload,jwtSecret,{expiresIn:"24h"});
+        //             const refresh_token = jwt.sign(payload,refreshSecret, {expiresIn:"7d"});
+        //             res.status(200).send({
+        //                 message:"login successfull",
+        //                 token:token,
+        //                 refresh_token:refresh_token
+        //             });
+        //             return;
+        //         }
+        //         catch(e){
+        //             res.status(500).send({message:"something went wrong"});
+        //         }
+        //     }
+        // }
         
     ]
 }
