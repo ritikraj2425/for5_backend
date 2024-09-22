@@ -23,14 +23,8 @@ const Question = mongoose.model('Question', questionSchema);
 
 const userDetailsSchema = new mongoose.Schema({
     name:String,
-    username:{
-        type:String,
-        unique:true
-    },
-    email:{
-        type:String,
-        unique:true
-    },
+    username:type:String,
+    email:type:String,
     password:String,
     bio: String,
     location:String,
