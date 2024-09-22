@@ -1,17 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const routes = require("./AllApis/AllRoutes");
 require('dotenv').config();
-
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-
-
-
-
-
 
 const mongoURI = process.env.MONGO_URI;
 const port = 5000;
@@ -32,7 +26,12 @@ const HomepageVideoLink = mongoose.model('HomepageVideos', videoLinkSchema);
 const Users  = mongoose.model('Users',userDetailsSchema);
 
 
-
+routes.forEach((route)=>{
+    route.routes.forEach((d)=>{
+        app[d.method](route.path + d.path, d.handler);
+        console.log(route.path + d.path);
+    })
+})
 
 
 app.get('/api/homepageVideoLink/Featured', async (req, res) => {
@@ -67,14 +66,6 @@ app.post('/post/userDetails', async(req,res)=>{
     res.status(200).send({msg:"success"});
 })
 
-app.get('/get/userDetails', async(req,res)=>{
-    const {uid} = req.query;
-    const user  = await Users.findOne({firebaseID: uid})
-    if(!user){
-        console.log("user not found");
-    }
-    res.status(200).json(user);
-})
 
 
 app.post("/posting", async (req,res)=>{
