@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const routes = require("./AllApis/AllRoutes");
 require('dotenv').config();
-
 const app = express();
 app.use(cors());
 app.use(express.json());
+
 const mongoURI = process.env.MONGO_URI;
 const port = 5000;
 
@@ -14,7 +14,6 @@ const port = 5000;
 mongoose.connect(mongoURI)
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('MongoDB connection error:', err));
-
 
 
 const {questionSchema}  = require('./Schemas/schemas');
@@ -100,6 +99,7 @@ app.get('/api/questions', async (req, res) => {
         res.status(500).json({ message: 'Error fetching questions' });
     }
 });
+
 
 app.get('/api/questions/:id', async (req, res) => {
     try {
