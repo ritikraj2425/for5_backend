@@ -29,7 +29,6 @@ const Users  = mongoose.model('Users',userDetailsSchema);
 routes.forEach((route)=>{
     route.routes.forEach((d)=>{
         app[d.method](route.path + d.path, d.handler);
-        console.log(route.path + d.path);
     })
 })
 
@@ -67,7 +66,7 @@ app.get('/api/questions', async (req, res) => {
         res.json(questions);
     } catch (error) {
         console.error('Error fetching questions:', error);
-        res.status(500).json({ message: 'Error fetching questions' })
+        res.status(500).json({ message: 'Error fetching questions' });
     }
 });
 

@@ -43,7 +43,7 @@ const videoLinkSchema = new mongoose.Schema({
 }, { collection: 'HomepageVideos' });
 
 const userStatusSchema = new mongoose.Schema({
-    username:"String",
+    username:String,
     totalPoints: Number,
     streak: Number,
     QuestionSolved: Number,
