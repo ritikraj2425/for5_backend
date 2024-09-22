@@ -29,7 +29,6 @@ const Users  = mongoose.model('Users',userDetailsSchema);
 routes.forEach((route)=>{
     route.routes.forEach((d)=>{
         app[d.method](route.path + d.path, d.handler);
-        console.log(route.path + d.path);
     })
 })
 
