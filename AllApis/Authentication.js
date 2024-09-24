@@ -1,8 +1,6 @@
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require('dotenv').config();
-const jwtSecret = process.env.JWT_SECRET;
-const refreshSecret = process.env.REFRESH_SECRET;
+const {generateJwt} = require("./Middlewares");
 const {Users}  = require('../Schemas/schemas');
 const AuthenticationRoutes = {
     path : "",
@@ -18,22 +16,22 @@ const AuthenticationRoutes = {
                     });
                     return;
                 }
-                const checkUsernameAndEmail  = await Users.findOne({username: username,email:email});
-                if(checkUsernameAndEmail){
-                    res.status(400).send({message:"username and email already exist"});
-                    return;
-                }
-                const checkUsername  = await Users.findOne({username: username});
-                if(checkUsername){
-                    res.status(400).send({message:"username already exist"});
-                    return;
-                }
-                const checkEmail  = await Users.findOne({email: email});
-                if(checkEmail){
-                    res.status(400).send({message:"email is already registered"});
-                    return;
-                }
                 try{
+                    const checkUsernameAndEmail  = await Users.findOne({username: username,email:email});
+                    if(checkUsernameAndEmail){
+                        res.status(400).send({message:"username and email already exist"});
+                        return;
+                    }
+                    const checkUsername  = await Users.findOne({username: username});
+                    if(checkUsername){
+                        res.status(400).send({message:"username already exist"});
+                        return;
+                    }
+                    const checkEmail  = await Users.findOne({email: email});
+                    if(checkEmail){
+                        res.status(400).send({message:"email is already registered"});
+                        return;
+                    }
                     const hash = await bcrypt.hash(password,10);
                     const user = new Users({
                         ...req.body,
@@ -41,12 +39,11 @@ const AuthenticationRoutes = {
                     });
                     await user.save();
                     const payload = {name,username,email};
-                    const token = jwt.sign(payload,jwtSecret,{expiresIn:"24h"});
-                    const refresh_token = jwt.sign(payload,refreshSecret, {expiresIn:"7d"});
+                    const tokens = generateJwt(payload);
                     res.status(200).send({
                         message:"success",
-                        token:token,
-                        refresh_token:refresh_token
+                        token:tokens.token,
+                        refresh_token:tokens.refresh_token
                     });
                     return;
 
@@ -92,12 +89,11 @@ const AuthenticationRoutes = {
                         username:user.username,
                         email:user.email
                     };
-                    const token = jwt.sign(payload,jwtSecret,{expiresIn:"24h"});
-                    const refresh_token = jwt.sign(payload,refreshSecret, {expiresIn:"7d"});
+                    const tokens = generateJwt(payload);
                     res.status(200).send({
                         message:"login successfull",
-                        token:token,
-                        refresh_token:refresh_token
+                        token:tokens.token,
+                        refresh_token:tokens.refresh_token
                     });
                     return;
                 }

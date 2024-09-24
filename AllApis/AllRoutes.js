@@ -1,2 +1,3 @@
 const AuthenticationRoutes = require("./Authentication");
-module.exports = [AuthenticationRoutes]
+const questionRoutes = require("./questions");
+module.exports = [AuthenticationRoutes,questionRoutes]
