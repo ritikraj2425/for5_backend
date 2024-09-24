@@ -6,9 +6,19 @@ const questionRoutes = {
             method : "get",//get all questions
             path : "/",
             handler : async (req,res)=>{
-                try {
+                const {search} = req.query;
+
+                try{
+                    if(search){
+                        const questions = await Question.find({ 
+                            questionTitle : { $regex : search, $options: 'i' } 
+                        });
+                        return res.status(200).json({
+                            result:questions
+                        })
+                    }
                     const questions = await Question.find();
-                    res.status(200).json(questions);
+                    return res.status(200).json(questions);
                 } catch (error) {
                     res.status(500).json({
                         message:"something went wrong",
@@ -42,28 +52,6 @@ const questionRoutes = {
             path : "/randomQustion",
             handler : async (req,res)=>{
                 res.send("question")
-            }
-        },
-        {
-            method : "get",
-            path : "/",// get searched question by query
-            handler : async (req,res)=>{
-                const {search} = req.query;
-                try{
-                    const questions = await Question.find({ 
-                        questionTitle : { $regex : search, $options: 'i' } 
-                    });
-                    res.status(200).json({
-                        result:questions
-                    })
-                }
-                catch(err){
-                    res.status(500).json({
-                        message:"something went wrong",
-                        error : err.message
-                    });
-                }
-
             }
         },
         {
