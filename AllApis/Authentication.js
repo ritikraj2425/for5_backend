@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 require('dotenv').config();
-const {generateJwt} = require("./Middlewares");
-const {Users}  = require('../Schemas/schemas');
+const {generateJwt,generateRefreshToken,verifyJwt} = require("./Middlewares");
+const {Users, UserStatus}  = require('../Schemas/schemas');
 const AuthenticationRoutes = {
     path : "",
     routes : [
@@ -38,12 +38,16 @@ const AuthenticationRoutes = {
                         password : hash
                     });
                     await user.save();
+                    const userStatus = new UserStatus({
+                        username:username
+                    })
                     const payload = {name,username,email};
-                    const tokens = generateJwt(payload);
+                    const token = generateJwt(payload);
+                    const refreshToken = generateRefreshToken(payload);
                     res.status(200).send({
                         message:"success",
-                        token:tokens.token,
-                        refresh_token:tokens.refresh_token
+                        jwtToken:token,
+                        refreshToken:refreshToken
                     });
                     return;
 
@@ -89,17 +93,32 @@ const AuthenticationRoutes = {
                         username:user.username,
                         email:user.email
                     };
-                    const tokens = generateJwt(payload);
+                    const token = generateJwt(payload);
+                    const refreshToken = generateRefreshToken(payload);
                     res.status(200).send({
                         message:"login successfull",
-                        token:tokens.token,
-                        refresh_token:tokens.refresh_token
+                        jwtToken:token,
+                        refreshToken:refreshToken
                     });
                     return;
                 }
                 catch(e){
                     res.status(500).send({message:"something went wrong"});
                 }
+            }
+        },
+        {
+            method : "post",
+            path : "/verifyUser",
+            handler : async (req,res)=>{
+                const {jwttoken,refreshtoken} = req.headers;
+                const check = verifyJwt(jwttoken,refreshtoken)
+                if(check){
+                    return res.status(200).json(check);
+                }
+                return res.status(400).json({
+                    message : "token expired"
+                })
             }
         }
     ]

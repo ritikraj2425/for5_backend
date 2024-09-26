@@ -17,7 +17,11 @@ const questionSchema = new mongoose.Schema({
     openedBy: Number,
     solvedBy: Number,
     type: String,
-    correctAnswer : String
+    correctAnswer : String,
+    status : {
+        type : String,
+        default : "unsolved"
+    }
 }, { collection: 'Questions' });
 const Question = mongoose.model('Question', questionSchema);
 
@@ -34,7 +38,11 @@ const userDetailsSchema = new mongoose.Schema({
     password:String,
     bio: String,
     location:String,
-    gender:String
+    gender:String,
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 },{collection: 'Users'});
 const Users  = mongoose.model('Users',userDetailsSchema);
 
@@ -47,11 +55,20 @@ const HomepageVideoLink = mongoose.model('HomepageVideos', videoLinkSchema);
 
 const userStatusSchema = new mongoose.Schema({
     username:String,
-    totalPoints: Number,
-    streak: Number,
-    QuestionSolved: Number,
-    questionAttempted: Number,
-    lives: Number,
+    totalPoints: {
+        type:Number,
+        default : 0
+    },
+    streak: {
+        type:Number,
+        default : 0
+    },
+    QuestionSolved: [Object],
+    questionAttempted: [Object],
+    lives: {
+        type:Number,
+        default : 0
+    },
     todayQuestionSolved: Object,
     contestGiven: Object,
 },{collection: 'UserStatus'});
