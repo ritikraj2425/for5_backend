@@ -2,12 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const routes = require("./AllApis/AllRoutes");
-const {Question,HomepageVideoLink}  = require('./Schemas/schemas');
+const {Question,HomepageVideoLink,UserStatus}  = require('./Schemas/schemas');
 require('dotenv').config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-
 const mongoURI = process.env.MONGO_URI;
 const port = 5000;
 
@@ -22,14 +21,27 @@ mongoose.connect(mongoURI)
 
 
 
+const secretApiKey = process.env.API_KEY;
 
 routes.forEach((route)=>{
     route.routes.forEach((d)=>{
-        app[d.method](route.path + d.path, d.handler);
+        app[d.method](route.path + d.path, async(req,res)=>{
+            const {apikey} = req.headers;
+            if(apikey != secretApiKey){
+                return res.status(400).json({
+                    message:"invalid api key"
+                })
+            }
+            return d.handler(req,res);
+        });
     })
 })
-
-
+app.get('/getUserStatus', async(req,res)=>{
+    const users = await UserStatus.find({});
+    return res.status(200).json({
+        result:users
+    })
+})
 app.get('/api/homepageVideoLink/Featured', async (req, res) => {
     try {
         const linkFeatured = await HomepageVideoLink.find({ section: "featured" });
