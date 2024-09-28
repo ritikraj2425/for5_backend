@@ -21,6 +21,10 @@ const questionSchema = new mongoose.Schema({
     status : {
         type : String,
         default : "unsolved"
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 }, { collection: 'Questions' });
 const Question = mongoose.model('Question', questionSchema);
@@ -39,6 +43,10 @@ const userDetailsSchema = new mongoose.Schema({
     bio: String,
     location:String,
     gender:String,
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
     createdAt: {
         type: Date,
         default: Date.now
@@ -71,6 +79,10 @@ const userStatusSchema = new mongoose.Schema({
     },
     todayQuestionSolved: Object,
     contestGiven: Object,
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 },{collection: 'UserStatus'});
 const UserStatus  = mongoose.model('UserStatus',userStatusSchema);
 

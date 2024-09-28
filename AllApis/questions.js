@@ -39,17 +39,16 @@ const questionRoutes = {
                             ...(status && {status : {$regex : `^${status}$`, $options: 'i' }})
                         }).skip((page-1)*limit).limit(limit);
                         const finalQuestions = questions.map((que)=>{
-                            if(theUser.QuestionSolved.includes(que.id)){
+                            if(theUser.QuestionSolved.includes(que._id)){
                                 que.status = "solved"
                             }
-                            else if(theUser.questionAttempted.includes(que.id)){
+                            else if(theUser.questionAttempted.includes(que._id)){
                                 que.status = "attempted"
                             }
                             return que
                         })
-                        console.log("hello ghndkasjfhnlaijskhefn");
                         return res.status(200).json({
-                            credentials:payload,
+                            username:payload.username,
                             result:finalQuestions
                         })
                     }
@@ -65,14 +64,29 @@ const questionRoutes = {
         },
         {
             method : "get",//get single question by id
-            path : "/:id",
+            path : "/question/:id",
             handler : async (req,res)=>{
                 const {id} = req.params;
-                const {jwtToken,refreshToken} = req.headers;
-                const verification = jwtVerification(token,refreshToken);
-                if(verification.payload){
+                const {jwttoken,refreshtoken} = req.headers;
+                const check = verifyJwt(jwttoken,refreshtoken);
+                if(!check){
+                    return res.status(400).json({
+                        message:"unauthorized"
+                    })
+                }
+                else{
                     try {
                         const question = await Question.findById(id);
+                        const payload = check.credentials.payload;
+                        const theUser = await UserStatus.findOne({username:payload.username});
+                        const attempted = theUser.questionAttempted;
+                        if(!attempted.includes(question._id)){
+                            attempted.push(question._id);
+                            await UserStatus.updateOne(
+                                {username:payload.username},
+                                { $set: { questionAttempted: attempted } } 
+                            )
+                        }
                         res.status(200).json({
                             message:"success",
                             result:question
@@ -81,9 +95,6 @@ const questionRoutes = {
                         res.status(404).json({ message: 'Question not found' });
                     }
                 }
-                return res.status(400).json({
-                    message:"unauthorized"
-                })
             }
         },
         {
@@ -91,35 +102,6 @@ const questionRoutes = {
             path : "/randomQustion",
             handler : async (req,res)=>{
                 res.send("question")
-            }
-        },
-        {
-            method : "get",
-            path : "/subject/:questionBySubject",//by params
-            handler : async (req,res)=>{
-                const {questionBySubject} = req.params;
-                try{
-                    const questions = await Question.find({
-                        subject:{ $regex : questionBySubject, $options: 'i' } 
-                    })
-                    return res.status(200).json({
-                        result:questions
-                    })
-                }
-                catch(err){
-                    return res.status(500).json({
-                        message:"something went wrong",
-                        error : err.message
-                    })
-                }
-            }
-        },
-
-        {
-            method : "get",
-            path : "/questionByChapter",//by query
-            handler : async (req,res)=>{
-                const {chapter} = req.query
             }
         },
         {
@@ -133,7 +115,7 @@ const questionRoutes = {
                     })
                     const chapters = {}
                     questions.map((q)=>{
-                        chapters.q = 1
+                        chapters[q.chapter] = 1
                     })
                     return res.status(200).json({
                         result:Object.keys(chapters)
@@ -156,7 +138,7 @@ const questionRoutes = {
             }
         },
         {
-            method : "patch",//update a single question
+            method : "patch",//for admins to update a single question
             path : "/:id",
             handler : async (req,res)=>{
                 res.send("question")

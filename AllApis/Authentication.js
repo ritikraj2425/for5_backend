@@ -38,9 +38,10 @@ const AuthenticationRoutes = {
                         password : hash
                     });
                     await user.save();
-                    const userStatus = new UserStatus({
+                    const statusOfUser = new UserStatus({
                         username:username
                     })
+                    await statusOfUser.save();
                     const payload = {name,username,email};
                     const token = generateJwt(payload);
                     const refreshToken = generateRefreshToken(payload);
