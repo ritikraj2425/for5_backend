@@ -11,13 +11,14 @@ const questionSchema = new mongoose.Schema({
     difficulty: String,
     year: Number,
     options: [Object],
+    selected : String,
+    correctAnswer : String,
     constestId: String,
     image: String,
     weightage: Number,
     openedBy: Number,
     solvedBy: Number,
     type: String,
-    correctAnswer : String,
     status : {
         type : String,
         default : "unsolved"
@@ -28,6 +29,12 @@ const questionSchema = new mongoose.Schema({
     }
 }, { collection: 'Questions' });
 const Question = mongoose.model('Question', questionSchema);
+
+const answersSchema = new mongoose.Schema({
+    question_id : String,
+    correctAnswer : String
+},{collection : "Answers"});
+const Answers = mongoose.model("Answers",answersSchema)
 
 const userDetailsSchema = new mongoose.Schema({
     name:String,
@@ -46,10 +53,6 @@ const userDetailsSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
     }
 },{collection: 'Users'});
 const Users  = mongoose.model('Users',userDetailsSchema);
@@ -57,7 +60,11 @@ const Users  = mongoose.model('Users',userDetailsSchema);
 const videoLinkSchema = new mongoose.Schema({
     VideoId: String,
     section: String,
-    link: String
+    link: String,
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 }, { collection: 'HomepageVideos' });
 const HomepageVideoLink = mongoose.model('HomepageVideos', videoLinkSchema);
 
@@ -71,7 +78,7 @@ const userStatusSchema = new mongoose.Schema({
         type:Number,
         default : 0
     },
-    QuestionSolved: [Object],
+    questionSolved: Object,
     questionAttempted: [Object],
     lives: {
         type:Number,
@@ -86,4 +93,4 @@ const userStatusSchema = new mongoose.Schema({
 },{collection: 'UserStatus'});
 const UserStatus  = mongoose.model('UserStatus',userStatusSchema);
 
-module.exports = {Question,Users,HomepageVideoLink,UserStatus};
+module.exports = {Question,Users,HomepageVideoLink,UserStatus,Answers};
