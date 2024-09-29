@@ -1,5 +1,5 @@
 const userRoutes = {
-    path : "/user",
+    parentPath : "/user",
     routes : [
         {
             method : "get",
