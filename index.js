@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json());
 const mongoURI = process.env.MONGO_URI;
 const secretApiKey = process.env.API_KEY;
-const port = process.env.PORT || 3030;
+const port = 5000;
 
 
 mongoose.connect(mongoURI)

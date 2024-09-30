@@ -46,7 +46,7 @@ const postRoutes = [
           });
           await user.save();
           const statusOfUser = new UserStatus({
-            username: username,
+            username: username
           });
           await statusOfUser.save();
           const payload = { name, username, email };
