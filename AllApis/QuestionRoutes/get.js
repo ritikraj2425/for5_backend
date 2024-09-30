@@ -4,8 +4,7 @@ const getRoutes = [
     {
       path: "/",//get all questions
       handler: async (req, res) => {
-        const { search, chapter, page, limit, difficulty, status } = req.query;
-        const { subject } = req.body;
+        const { subject, search, chapter, page, limit, difficulty, status } = req.query;
         const { jwttoken, refreshtoken } = req.headers;
 
         const check = verifyJwt(jwttoken, refreshtoken);
@@ -34,15 +33,20 @@ const getRoutes = [
               ...queryToFilter,
               ...(status && {status: { $regex: `^${status}$`, $options: "i" }}),
             }).skip((page - 1) * limit).limit(limit);
-            
             const finalQuestions = questions.map((que) => {
-              if (theUser.QuestionSolved.includes(que._id)) {
-                que.status = "solved";
-              } 
-              else if (theUser.questionAttempted.includes(que._id)) {
-                que.status = "attempted";
-              }
-              return que;
+                theUser.questionSolved.forEach((status)=>{
+                    if(que._id == status._id){
+                        que.selected = status.selected;
+                        que.correctAnswer = status.correctAnswer;
+                        que.status = "solved";
+                    }
+                })
+                theUser.questionAttempted.forEach((status)=>{
+                    if(que._id == status._id){
+                        que.status = "attempted";
+                    }
+                })
+                return que;
             });
             return res.status(200).json({
               username: payload.username,
@@ -74,9 +78,11 @@ const getRoutes = [
             const theUser = await UserStatus.findOne({
               username: payload.username,
             });
-            if(Object.keys(theUser.questionSolved).includes(id)){
-                question.selected = theUser.questionSolved.selected;
-                question.correctAnswer = theUser.questionSolved.correctAnswer;
+            const isQuestionSolved = theUser.questionSolved.filter((que)=>que._id == id);
+            if(isQuestionSolved.length != 0){ 
+                question.selected = isQuestionSolved[0].selected;
+                question.correctAnswer = isQuestionSolved[0].correctAnswer;
+                
             }
             else{
                 await UserStatus.updateOne(
@@ -84,6 +90,7 @@ const getRoutes = [
                   { $addToSet: { questionAttempted: id } }
                 );
             }
+            
             res.status(200).json({
               message: "success",
               result: question,

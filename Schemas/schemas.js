@@ -78,7 +78,7 @@ const userStatusSchema = new mongoose.Schema({
         type:Number,
         default : 0
     },
-    questionSolved: Object,
+    questionSolved: [Object],
     questionAttempted: [Object],
     lives: {
         type:Number,
