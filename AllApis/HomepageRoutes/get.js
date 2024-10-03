@@ -1,4 +1,4 @@
-const { HomepageVideoLink } = require("../../Schemas/schemas");
+const { HomepageVideoLink } = require("../../Schemas/allSchemas");
 const getRoutes = [
     {
       path: "/featured",

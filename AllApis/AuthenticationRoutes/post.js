@@ -1,11 +1,7 @@
 const bcrypt = require("bcrypt");
 require("dotenv").config();
-const {
-  generateJwt,
-  generateRefreshToken,
-  verifyJwt,
-} = require("../HelperFunctions");
-const { Users, UserStatus } = require("../../Schemas/schemas");
+const Verification = require("../JsonWebTokens");
+const { Users, UserStatus } = require("../../Schemas/allSchemas");
 
 const postRoutes = [
     {
@@ -50,8 +46,8 @@ const postRoutes = [
           });
           await statusOfUser.save();
           const payload = { name, username, email };
-          const token = generateJwt(payload);
-          const refreshToken = generateRefreshToken(payload);
+          const token = Verification.generateJwt(payload);
+          const refreshToken = Verification.generateRefreshToken(payload);
           res.status(200).send({
             message: "success",
             jwtToken: token,
@@ -101,8 +97,8 @@ const postRoutes = [
             username: user.username,
             email: user.email,
           };
-          const token = generateJwt(payload);
-          const refreshToken = generateRefreshToken(payload);
+          const token = Verification.generateJwt(payload);
+          const refreshToken = Verification.generateRefreshToken(payload);
           res.status(200).send({
             message: "login successfull",
             jwtToken: token,
@@ -118,7 +114,7 @@ const postRoutes = [
       path: "/verifyUser",
       handler: async (req, res) => {
         const { jwttoken, refreshtoken } = req.headers;
-        const check = verifyJwt(jwttoken, refreshtoken);
+        const check = Verification.verifyJwt(jwttoken, refreshtoken);
         if (check) {
           return res.status(200).json(check);
         }
