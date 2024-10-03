@@ -1,5 +1,5 @@
-const { Question, UserStatus } = require("../../Schemas/schemas");
-const { verifyJwt } = require("../HelperFunctions");
+const { Question, UserStatus } = require("../../Schemas/allSchemas");
+const Verification = require('../JsonWebTokens');
 const getRoutes = [
     {
       path: "/",//get all questions
@@ -7,7 +7,7 @@ const getRoutes = [
         const { subject, search, chapter, page, limit, difficulty, status } = req.query;
         const { jwttoken, refreshtoken } = req.headers;
 
-        const check = verifyJwt(jwttoken, refreshtoken);
+        const check = Verification.verifyJwt(jwttoken, refreshtoken);
         const queryToFilter = {
           ...(search && { questionTitle: { $regex: search, $options: "i" }}),
           ...(chapter && {chapter: { $regex: `^${chapter}$`, $options: "i" }}),
@@ -66,7 +66,7 @@ const getRoutes = [
       handler: async (req, res) => {
         const { id } = req.params;
         const { jwttoken, refreshtoken } = req.headers;
-        const check = verifyJwt(jwttoken, refreshtoken);
+        const check = Verification.verifyJwt(jwttoken, refreshtoken);
         if (!check) {
           return res.status(400).json({
             message: "unauthorized",
@@ -82,6 +82,7 @@ const getRoutes = [
             if(isQuestionSolved.length != 0){ 
                 question.selected = isQuestionSolved[0].selected;
                 question.correctAnswer = isQuestionSolved[0].correctAnswer;
+                question.status = "solved";
                 
             }
             else{
@@ -108,9 +109,9 @@ const getRoutes = [
       },
     },
     {
-      path: "/chapterList",
+      path: "/chapterList/:subject",
       handler: async (req, res) => {
-        const { subject } = req.body;
+        const { subject } = req.params;
         try {
           const questions = await Question.find({
             subject: { $regex: subject, $options: "i" },

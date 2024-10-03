@@ -19,24 +19,24 @@ mongoose.connect(mongoURI)
     });
 
 
-
+function checkForApiKey(req,res,next){
+    const {apikey} = req.headers;
+    if(!apikey){
+        return res.status(404).json({
+            message:"api key not found"
+        })
+    }
+    if(apikey != secretApiKey){
+        return res.status(400).json({
+            message:"invalid api key"
+        })
+    }
+    next()
+}
 routes.forEach((route)=>{
     Object.keys(route.routes).forEach((method)=>{
         route.routes[method].forEach((api)=>{
-            app[method](route.parentPath + api.path , async(req,res)=>{
-                const {apikey} = req.headers;
-                if(!apikey){
-                    return res.status(404).json({
-                        message:"api key not found"
-                    })
-                }
-                if(apikey != secretApiKey){
-                    return res.status(400).json({
-                        message:"invalid api key"
-                    })
-                }
-                return api.handler(req,res);
-            })
+            app[method](route.parentPath + api.path, checkForApiKey, api.handler)
         })
     })
 })
