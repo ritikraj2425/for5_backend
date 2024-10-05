@@ -1,4 +1,4 @@
-const getRoutes = require("./get");
+const getRoutes = require("./Routes/get");
 const homepageRoutes = {
   parentPath: "/homepage",
   routes: {

@@ -10,7 +10,6 @@ const mongoURI = process.env.MONGO_URI;
 const secretApiKey = process.env.API_KEY;
 const port = 5000;
 
-
 mongoose.connect(mongoURI)
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => {
@@ -40,7 +39,6 @@ routes.forEach((route)=>{
         })
     })
 })
-
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

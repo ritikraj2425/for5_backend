@@ -24,6 +24,13 @@ class Verification{
             return false
         }
     }
+    static updatePayload(payload){
+        return {
+            name : payload.name,
+            username : payload.username,
+            email : payload.email
+        }
+    }
     
     static verifyJwt(jwtToken,refreshToken){
         const jwtPayload = this.tokenVerification(jwtToken,"jwt");
@@ -32,7 +39,7 @@ class Verification{
             return {
                 message:"valid user",
                 credentials:{
-                    payload : jwtPayload,
+                    payload : this.updatePayload(jwtPayload),
                     jwtToken:jwtToken,
                     refreshToken:refreshToken
                 }
@@ -48,7 +55,7 @@ class Verification{
             return {
                 message:"valid user",
                 credentials:{
-                    payload : refreshPayload,
+                    payload : this.updatePayload(refreshPayload),
                     jwtToken : newJwtToken,
                     refreshToken:refreshToken
                 }
@@ -64,7 +71,7 @@ class Verification{
             return {
                 message:"valid user",
                 credentials:{
-                    payload:jwtPayload,
+                    payload: this.updatePayload(jwtPayload),
                     jwtToken : jwtToken,
                     refreshToken:newRefreshToken
                 }
