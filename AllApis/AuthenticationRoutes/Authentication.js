@@ -1,4 +1,4 @@
-const postRoutes = require("./post");
+const postRoutes = require("./Routes/post");
 const authenticationRoutes = {
     parentPath: "",
     routes: {

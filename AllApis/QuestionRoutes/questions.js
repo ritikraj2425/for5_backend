@@ -1,6 +1,6 @@
-const getRoutes = require("./get");
-const postRoutes = require("./post");
-const patchRoutes = require("./patch");
+const getRoutes = require("./Routes/get");
+const postRoutes = require("./Routes/post");
+const patchRoutes = require("./Routes/patch");
 const questionRoutes = {
   parentPath: "/allquestions",
   routes: {
