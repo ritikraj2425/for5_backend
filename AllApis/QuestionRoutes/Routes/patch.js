@@ -1,9 +1,9 @@
-const patchRoutes = [
+const updateQuestionById = require("../Controllers/updateQuestion");
+
+const deleteRoutes = [
     {
-      path: "/:id",
-      handler: async (req, res) => {
-        res.send("question");
-      },
-    },
-  ]
-module.exports = patchRoutes;
+      path: "/updatequestion/:id",
+      handler: updateQuestionById 
+    }
+]
+module.exports = deleteRoutes;

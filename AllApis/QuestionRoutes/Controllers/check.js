@@ -1,4 +1,4 @@
-const { UserStatus } = require('../../../Schemas/allSchemas');
+const { UserStatus, Answers } = require('../../../Schemas/allSchemas');
 const Verification = require('../../JsonWebTokens');
 
 const check = async (req, res) => {
