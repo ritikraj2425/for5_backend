@@ -1,4 +1,4 @@
-const { UserStatus } = require('../../../Schemas/allSchemas');
+const { UserStatus,Answers } = require('../../../Schemas/allSchemas');
 const Verification = require('../../JsonWebTokens');
 
 const check = async (req, res) => {
@@ -29,7 +29,7 @@ const check = async (req, res) => {
         const ans = await Answers.findOne({question_id : question_id});
         const newData = {
           _id : question_id,
-          selected : selected , 
+          selected : selected ,
           correctAnswer : ans.correctAnswer,
           subject : ans.subject
         }
@@ -50,6 +50,7 @@ const check = async (req, res) => {
         })
       }
       catch(err){
+        console.log(err);
         return res.status(500).json({
           message : "something went wrong"
         })

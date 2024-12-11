@@ -1,4 +1,5 @@
 const { Users, UserStatus } = require('../../../Schemas/allSchemas');
+const Verification = require('../../JsonWebTokens');
 
 const userDetails = async (req, res) => {
     const { jwttoken, refreshtoken } = req.headers;
@@ -26,6 +27,7 @@ const userDetails = async (req, res) => {
             })
             return res.status(200).json({
                 name:user.name,
+                username: user.username,
                 bio : user.bio,
                 location : user.location,
                 gender : user.gender,
