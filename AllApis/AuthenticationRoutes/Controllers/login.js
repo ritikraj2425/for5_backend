@@ -4,11 +4,23 @@ const Verification = require("../../JsonWebTokens");
 const { Users } = require('../../../Schemas/allSchemas');
 
 const login =  async (req, res) => {
-    const { username, email, password } = req.body;
-    if (!password || (!email && !username)) {
+    const {emailOrUsername, password } = req.body;
+    if (!password || !emailOrUsername) {
       res.status(400).send({ message: "all fields are required" });
       return;
     }
+    let email ="";
+    let username ="";
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const isEmail = emailRegex.test(emailOrUsername);
+
+    if (isEmail) {
+      email = emailOrUsername;
+    } else {
+      username = emailOrUsername;
+    }
+
 
 
     try {
